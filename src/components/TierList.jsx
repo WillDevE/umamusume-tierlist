@@ -76,6 +76,7 @@ class TierList extends React.Component {
                     onClick={() => this.props.cardSelected(cards.find((c) => c.id === processedCards[i].id && c.limit_break === processedCards[i].lb))}
                     stats={this.state.dropdownSelections}
                     isOwned={processedCards[i].isOwned}
+                    isObsolete={processedCards[i].isObsolete}
                 />
             ));
         }
@@ -180,6 +181,8 @@ function processCards(cards, weights, selectedCards, inventory, hideUnowned) {
         let ownedLB = inventory ? inventory[currentCard.id] : undefined;
         // It is owned if the inventory has this ID recorded at a level >= the card's level
         let isOwned = ownedLB !== undefined && ownedLB >= currentCard.limit_break;
+        // It is obsolete if the inventory has this ID recorded at a level > the card's level
+        let isObsolete = ownedLB !== undefined && ownedLB > currentCard.limit_break;
 
         if (hideUnowned && !isOwned) {
             continue; // Skip adding this card to the list entirely
@@ -382,7 +385,8 @@ function processCards(cards, weights, selectedCards, inventory, hideUnowned) {
             score: score,
             info: info,
             char_name: card.char_name,
-            isOwned: isOwned // --- Add isOwned to the result object
+            isOwned: isOwned,
+            isObsolete: isObsolete
         })
     }
 

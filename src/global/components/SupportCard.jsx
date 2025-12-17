@@ -41,6 +41,7 @@ function SupportCard(props) {
     if (alreadySelected) className += " selected";
     // If isOwned prop is provided (not undefined) and false, add unowned class
     if (props.isOwned === false) className += " unowned";
+    if (props.isObsolete) className += " obsolete";
 
     return (
         <div className={className}>
