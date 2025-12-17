@@ -35,9 +35,15 @@ function SupportCard(props) {
     }
 
     const alreadySelected = props.selected.indexOf(props.charName) > -1;
+    
+    // Determine class name based on ownership
+    let className = "support-card";
+    if (alreadySelected) className += " selected";
+    // If isOwned prop is provided (not undefined) and false, add unowned class
+    if (props.isOwned === false) className += " unowned";
 
     return (
-        <div className="support-card">
+        <div className={className}>
             <img
                 className={alreadySelected ? "support-card-image selected" : "support-card-image"}
                 name={props.id}

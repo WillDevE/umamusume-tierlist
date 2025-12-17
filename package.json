@@ -2,7 +2,8 @@
   "name": "umamusume-tierlist",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://euophrys.github.io/uma-tiers/",
+  "main": "electron/main.js",
+  "homepage": "./",
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

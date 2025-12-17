@@ -31,6 +31,7 @@ function SelectedCards(props) {
         let lit_up = "";
         let dark = "";
         let card = props.selectedCards[i];
+        if (!card) continue;
         raceBonus += card.race_bonus;
 
         for(let j = 0; j < 4; j++) {

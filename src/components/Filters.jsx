@@ -76,7 +76,7 @@ class Filters extends React.Component {
     render() {
         const rarities = ["ssr","sr","r"];
         let rows = [];
-        rows.push(<tr><th>SSR</th><th>SR</th><th>R</th></tr>);
+        rows.push(<tr key="header"><th>SSR</th><th>SR</th><th>R</th></tr>);
         for (let i = 4; i >= 0; i--) {
             let data = [];
             let lit_up = "";

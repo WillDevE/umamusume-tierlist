@@ -39,13 +39,13 @@ class TierList extends React.Component {
 
     render() {
         let cards = this.props.cards;
-        let selectedNames = this.props.selectedCards.map(card => card.char_name);
+        let selectedNames = this.props.selectedCards.filter(c => c).map(card => card.char_name);
     
         if(this.props.weights.type > -1) {
             cards = cards.filter(e => e.type === this.props.weights.type);
         }
     
-        let processedCards = processCards(cards, this.props.weights, this.props.selectedCards);
+        let processedCards = processCards(cards, this.props.weights, this.props.selectedCards, this.props.inventory, this.props.hideUnowned);
     
         if (processedCards.length === 0) {
             return <div className="tier-list"></div>;
@@ -75,6 +75,7 @@ class TierList extends React.Component {
                     card={cards.find((c) => c.id === processedCards[i].id && c.limit_break === processedCards[i].lb)}
                     onClick={() => this.props.cardSelected(cards.find((c) => c.id === processedCards[i].id && c.limit_break === processedCards[i].lb))}
                     stats={this.state.dropdownSelections}
+                    isOwned={processedCards[i].isOwned}
                 />
             ));
         }
@@ -123,7 +124,7 @@ const raceRewards = [
     [13.5,13.5,13.5,13.5,13.5,50]
 ]
 
-function processCards(cards, weights, selectedCards) {
+function processCards(cards, weights, selectedCards, inventory, hideUnowned) {
     let processedCards = [];
     selectedCards = JSON.parse(JSON.stringify(selectedCards));
     
@@ -174,6 +175,16 @@ function processCards(cards, weights, selectedCards) {
     }, 1);
     
     for (let i = 0; i < cards.length; i++) {
+        // Ownership Logic
+        let currentCard = cards[i];
+        let ownedLB = inventory ? inventory[currentCard.id] : undefined;
+        // It is owned if the inventory has this ID recorded at a level >= the card's level
+        let isOwned = ownedLB !== undefined && ownedLB >= currentCard.limit_break;
+
+        if (hideUnowned && !isOwned) {
+            continue; // Skip adding this card to the list entirely
+        }
+
         let info = {};
         let card = JSON.parse(JSON.stringify(cards[i]));
         let cardType = card.type;
@@ -370,7 +381,8 @@ function processCards(cards, weights, selectedCards) {
             lb: card.limit_break,
             score: score,
             info: info,
-            char_name: card.char_name
+            char_name: card.char_name,
+            isOwned: isOwned // --- Add isOwned to the result object
         })
     }
 

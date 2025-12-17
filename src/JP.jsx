@@ -4,9 +4,11 @@ import TierList from './components/TierList';
 import Weights from './components/Weights';
 import SelectedCards from './components/SelectedCards';
 import Filters from './components/Filters';
+import InventoryManager from './components/InventoryManager';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import DarkModeToggle from './components/DarkModeButton';
+import { lsTest } from './utils';
 
 const ordinal = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th"];
 const type_names = ["Speed", "Stamina", "Power", "Guts", "Wisdom", "", "Friend"];
@@ -59,9 +61,13 @@ class JP extends React.Component {
                 cards.find((c) => c.id === 30187 && c.limit_break === 4),
                 cards.find((c) => c.id === 30233 && c.limit_break === 4),
                 cards.find((c) => c.id === 30257 && c.limit_break === 4),
-            ],
+            ].filter(c => c !== undefined),
             availableCards: cards,
-            label: "Ranking for the 2nd Speed card in this deck:"
+            label: "Ranking for the 2nd Speed card in this deck:",
+            
+            inventory: {}, // Format: { cardId: maxLimitBreak }
+            showInventoryManager: false,
+            hideUnowned: false
         }
 
         this.onWeightsChanged = this.onWeightsChanged.bind(this);
@@ -69,6 +75,18 @@ class JP extends React.Component {
         this.onCardRemoved = this.onCardRemoved.bind(this);
         this.onCardsChanged = this.onCardsChanged.bind(this);
         this.onLoadPreset = this.onLoadPreset.bind(this);
+        
+        this.toggleInventoryManager = this.toggleInventoryManager.bind(this);
+        this.toggleHideUnowned = this.toggleHideUnowned.bind(this);
+        this.onInventoryUpdate = this.onInventoryUpdate.bind(this);
+        this.closeInventoryManager = this.closeInventoryManager.bind(this);
+
+        if(lsTest()) {
+            let savedInventory = window.localStorage.getItem("userInventory");
+            if (savedInventory !== null) {
+                this.state.inventory = JSON.parse(savedInventory);
+            }
+        }
     }
 
     onWeightsChanged(statWeights, generalWeights) {
@@ -110,6 +128,25 @@ class JP extends React.Component {
         this.setState({selectedCards:selectedCards});
     }
 
+    toggleInventoryManager() {
+        this.setState({ showInventoryManager: !this.state.showInventoryManager });
+    }
+
+    toggleHideUnowned() {
+        this.setState({ hideUnowned: !this.state.hideUnowned });
+    }
+
+    onInventoryUpdate(newInventory) {
+        this.setState({ inventory: newInventory });
+        if(lsTest()) {
+            window.localStorage.setItem("userInventory", JSON.stringify(newInventory));
+        }
+    }
+
+    closeInventoryManager() {
+        this.setState({ showInventoryManager: false });
+    }
+
     render() {
         return (
             <div className="App">
@@ -120,6 +157,21 @@ class JP extends React.Component {
                     If you play on Global, use the <Link to="global">Global Tier List</Link><br/>
                     This tier list defaults to the DYI Scenario and doesn't consider skills, only stats.<br/>
                 </span>
+                
+                <div className="inventory-controls">
+                    <button onClick={this.toggleInventoryManager} className="inventory-btn">
+                        Manage Inventory ({Object.keys(this.state.inventory).length} cards owned)
+                    </button>
+                    <label>
+                        <input 
+                            type="checkbox" 
+                            checked={this.state.hideUnowned} 
+                            onChange={this.toggleHideUnowned} 
+                        />
+                        Hide Unowned
+                    </label>
+                </div>
+
                 <Weights
                     onChange={this.onWeightsChanged}
                     />
@@ -137,7 +189,18 @@ class JP extends React.Component {
                     weights={this.state.weights}
                     selectedCards={this.state.selectedCards}
                     cardSelected={this.onCardSelected}
+                    inventory={this.state.inventory}
+                    hideUnowned={this.state.hideUnowned}
                 />
+
+                {/* --- INVENTORY MANAGER MODAL --- */}
+                {this.state.showInventoryManager && (
+                    <InventoryManager
+                        inventory={this.state.inventory}
+                        onInventoryUpdate={this.onInventoryUpdate}
+                        onClose={this.closeInventoryManager}
+                    />
+                )}
             </div>
         );
     }
