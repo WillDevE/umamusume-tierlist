@@ -75,7 +75,7 @@ class TierList extends React.Component {
                     card={cards.find((c) => c.id === processedCards[i].id && c.limit_break === processedCards[i].lb)}
                     onClick={() => this.props.cardSelected(cards.find((c) => c.id === processedCards[i].id && c.limit_break === processedCards[i].lb))}
                     stats={this.state.dropdownSelections}
-                    isOwned={processedCards[i].isOwned}
+                    isOwned={this.props.disableGraying ? true : processedCards[i].isOwned}
                     isObsolete={processedCards[i].isObsolete}
                 />
             ));

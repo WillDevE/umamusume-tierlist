@@ -120,6 +120,17 @@ class InventoryManager extends React.Component {
                                 ))}
                             </select>
                         </div>
+
+                        <div className="settings-section">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={this.props.disableGraying}
+                                    onChange={this.props.onToggleDisableGraying}
+                                />
+                                Disable graying of unowned cards
+                            </label>
+                        </div>
                     </div>
 
                     <div className="inventory-grid">

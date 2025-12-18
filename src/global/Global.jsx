@@ -67,7 +67,8 @@ class Global extends React.Component {
             
             inventory: {}, // Format: { cardId: maxLimitBreak }
             showInventoryManager: false,
-            hideUnowned: false
+            hideUnowned: false,
+            disableGraying: false
         }
 
         this.onWeightsChanged = this.onWeightsChanged.bind(this);
@@ -78,6 +79,7 @@ class Global extends React.Component {
         
         this.toggleInventoryManager = this.toggleInventoryManager.bind(this);
         this.toggleHideUnowned = this.toggleHideUnowned.bind(this);
+        this.toggleDisableGraying = this.toggleDisableGraying.bind(this);
         this.onInventoryUpdate = this.onInventoryUpdate.bind(this);
         this.closeInventoryManager = this.closeInventoryManager.bind(this);
 
@@ -136,6 +138,10 @@ class Global extends React.Component {
         this.setState({ hideUnowned: !this.state.hideUnowned });
     }
 
+    toggleDisableGraying() {
+        this.setState({ disableGraying: !this.state.disableGraying });
+    }
+
     onInventoryUpdate(newInventory) {
         this.setState({ inventory: newInventory });
         if(lsTest()) {
@@ -191,6 +197,7 @@ class Global extends React.Component {
                     cardSelected={this.onCardSelected}
                     inventory={this.state.inventory}
                     hideUnowned={this.state.hideUnowned}
+                    disableGraying={this.state.disableGraying}
                 />
 
                 {/* --- INVENTORY MANAGER MODAL --- */}
@@ -199,6 +206,8 @@ class Global extends React.Component {
                         inventory={this.state.inventory}
                         onInventoryUpdate={this.onInventoryUpdate}
                         onClose={this.closeInventoryManager}
+                        disableGraying={this.state.disableGraying}
+                        onToggleDisableGraying={this.toggleDisableGraying}
                     />
                 )}
             </div>
